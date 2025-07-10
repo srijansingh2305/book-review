@@ -1,0 +1,65 @@
+openapi: 3.0.0
+info:
+  title: Book Review API
+  version: 1.0.0
+paths:
+  /books:
+    get:
+      summary: Get all books
+      responses:
+        "200":
+          description: List of books
+    post:
+      summary: Add a book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/BookInput"
+      responses:
+        "201":
+          description: Book created
+  /books/{id}/reviews:
+    get:
+      summary: Get reviews for a book
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: List of reviews
+    post:
+      summary: Add review to book
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ReviewInput"
+      responses:
+        "201":
+          description: Review created
+components:
+  schemas:
+    BookInput:
+      type: object
+      required: [title, author, published_date]
+      properties:
+        title:
+          type: string
+        author:
+          type: string
+        published_date:
+          type: string
+    ReviewInput:
+      type: object
+      required: [reviewer, content]
+      properties:
+        reviewer:
+          type: string
+        content:
+          type: string
