@@ -38,7 +38,7 @@ A RESTful backend service to manage books and their reviews. Built with **TypeSc
 ```bash
 git clone https://github.com/your-username/book-review-api.git
 cd book-review-api
-
+```
 
 ### 2. Install Dependencies
 npm install
