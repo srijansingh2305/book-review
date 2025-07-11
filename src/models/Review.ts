@@ -1,17 +1,18 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Index } from 'typeorm';
 import { Book } from './Book';
 
-@Entity()
+@Entity() // Declares this class as a table named "review"
 export class Review {
-  @PrimaryGeneratedColumn()
+  @PrimaryGeneratedColumn() // Auto-incrementing primary key
   id!: number;
 
-  @Column()
+  @Column() // Reviewer's name
   reviewer!: string;
 
-  @Column()
+  @Column() // Review content
   content!: string;
 
-  @ManyToOne(() => Book, book => book.reviews, { onDelete: 'CASCADE' })
+  @Index('idx_review_bookId') // Adds index on the foreign key column to optimize queries
+  @ManyToOne(() => Book, (book) => book.reviews, { onDelete: 'CASCADE' }) // Many reviews can belong to one book; delete reviews if book is deleted
   book!: Book;
 }

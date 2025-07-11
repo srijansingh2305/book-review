@@ -6,7 +6,11 @@
   "scripts": {
     "dev": "nodemon src/app.ts",
     "build": "tsc",
-    "start": "node dist/app.js"
+    "start": "node dist/app.js",
+    "typeorm": "typeorm-ts-node-commonjs",
+    "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/utils/dataSource.ts src/migrations/InitSchema",
+    "migration:run": "typeorm-ts-node-commonjs migration:run -d src/utils/dataSource.ts",
+    "migration:revert": "typeorm-ts-node-commonjs migration:revert -d src/utils/dataSource.ts"
   },
   "keywords": [],
   "author": "",
@@ -24,10 +28,15 @@
   },
   "devDependencies": {
     "@types/express": "^5.0.3",
+    "@types/jest": "^30.0.0",
     "@types/node": "^24.0.12",
+    "@types/supertest": "^6.0.3",
     "@types/swagger-ui-express": "^4.1.8",
     "@types/yamljs": "^0.2.34",
+    "jest": "^30.0.4",
     "nodemon": "^3.1.10",
+    "supertest": "^7.1.3",
+    "ts-jest": "^29.4.0",
     "ts-node": "^10.9.2",
     "typeorm": "^0.3.25",
     "typescript": "^5.8.3"

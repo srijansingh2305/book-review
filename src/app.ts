@@ -1,54 +1,54 @@
-import express from 'express';
+// src/app.ts
 import 'reflect-metadata';
-import { AppDataSource } from './utils/dataSource';
+import express from 'express';
+import AppDataSource from './utils/dataSource';
+import redisClient from './utils/redisClient';
 import bookRoutes from './routes/bookRoutes';
+import { errorHandler } from './middlewares/errorHandler';
+
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
-import redisClient from './utils/redisClient';
+// Load Swagger documentation from YAML file
+const swaggerDocument = YAML.load('./swagger.yaml'); // make sure path is correct
 
-const swaggerDocument = YAML.load('./swagger.yaml');
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
-// Middleware
+// Middleware for parsing JSON requests
 app.use(express.json());
 
-// Swagger Docs
+// Swagger Docs route
 app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 // Routes
-app.use('/books', bookRoutes); // ✅ Use proper route prefix to avoid root conflicts
+app.use('/books', bookRoutes);
 
-// Default route
-app.get('/', (req, res) => res.send('📚 Book Review API is running!'));
+// Health check
+app.get('/', (req, res) => {
+  res.send('📚 Book Review API is running!');
+});
 
-// Startup logic
+app.use(errorHandler);
+
+// Initialize database and start server
 const startServer = async () => {
   try {
     await AppDataSource.initialize();
-    console.log('📦 DB initialized');
+    console.log('Database connected successfully');
 
-    if (!redisClient.isOpen) {
-      await redisClient.connect();
-      console.log('📡 Redis connected');
-    }
+    await redisClient.connect();
+    console.log('📡 Redis connected successfully');
 
     app.listen(PORT, () => {
-      console.log(`Server on http://localhost:${PORT}`);
+      console.log(`Server running at http://localhost:${PORT}`);
+      console.log(`Swagger docs at http://localhost:${PORT}/api-docs`);
     });
-  } catch (err) {
-    console.error(' Startup error:', err);
+  } catch (error) {
+    console.error('Error starting server:', error);
     process.exit(1);
   }
 };
 
-// Graceful shutdown
-process.on('SIGINT', async () => {
-  if (redisClient.isOpen) {
-    await redisClient.quit();
-    console.log('❎ Redis client disconnected');
-  }
-  process.exit(0);
-});
-
 startServer();
+
+export default app;
