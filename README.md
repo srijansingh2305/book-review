@@ -50,23 +50,30 @@ docker run -p 6379:6379 redis
 
 Migrations & Seeding
 Generate Migrations (Already done if using provided repo)
+
 npx typeorm-ts-node-commonjs migration:generate -d src/utils/dataSource.ts src/migrations/InitSchema
+```
 
-
+```bash
 Run Migrations
 npx typeorm-ts-node-commonjs migration:run -d src/utils/dataSource.ts
-
+```
 
 Seed Sample Data
+```
 npm run seed
-
+```
 
 Running the Server
+```
 npm run dev
+```
 http://localhost:3000
 
 Running Tests
+```
 npm run test
+```
 
 Tests include:
 
