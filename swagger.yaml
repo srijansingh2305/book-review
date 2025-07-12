@@ -34,6 +34,12 @@ paths:
           description: List of reviews
     post:
       summary: Add review to book
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
       requestBody:
         required: true
         content:
@@ -43,6 +49,20 @@ paths:
       responses:
         "201":
           description: Review created
+
+    delete:
+      summary: Delete a review by ID
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Review deleted successfully
+        "404":
+          description: Review not found
 components:
   schemas:
     BookInput:

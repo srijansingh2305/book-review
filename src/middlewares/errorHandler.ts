@@ -7,9 +7,12 @@ export const errorHandler = (
   res: Response,
   next: NextFunction
 ) => {
-  console.error(`[ERROR] ${err.name}: ${err.message}`); // Log error to console
+  // Log the error details to the console for debugging
+  console.error(`[ERROR] ${err.name}: ${err.message}`);
+
+  // Send a generic error response to the client
   res.status(500).json({
-    message: 'Internal Server Error', // Generic response
-    error: err.message, // Include actual error message for debugging
+    message: 'Internal Server Error', // Generic error message
+    error: err.message, // Actual error message for debugging purposes
   });
 };

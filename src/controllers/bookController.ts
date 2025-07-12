@@ -63,3 +63,19 @@ export const addReview = async (req: Request, res: Response) => {
     res.status(500).json({ error: 'Failed to add review' });
   }
 };
+
+export const deleteReview = async (req: Request, res: Response) => {
+  try {
+    const review = await reviewRepo.findOne({
+      where: { id: parseInt(req.params.id) },
+    });
+
+    if (!review) return res.status(404).json({ error: 'Review not found' });
+
+    await reviewRepo.remove(review);
+    await redisClient.del('books_cache'); // Invalidate cache
+    res.status(200).json({ message: 'Review deleted successfully' });
+  } catch (err) {
+    res.status(500).json({ error: 'Failed to delete review' });
+  }
+};

@@ -5,7 +5,6 @@ import AppDataSource from './utils/dataSource';
 import redisClient from './utils/redisClient';
 import bookRoutes from './routes/bookRoutes';
 import { errorHandler } from './middlewares/errorHandler';
-
 import swaggerUi from 'swagger-ui-express';
 import YAML from 'yamljs';
 // Load Swagger documentation from YAML file
@@ -25,7 +24,7 @@ app.use('/books', bookRoutes);
 
 // Health check
 app.get('/', (req, res) => {
-  res.send('📚 Book Review API is running!');
+  res.send('Book Review API is running!');
 });
 
 app.use(errorHandler);

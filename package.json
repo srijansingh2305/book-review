@@ -4,8 +4,12 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "seed": "ts-node src/utils/seed.ts",
     "dev": "nodemon src/app.ts",
     "build": "tsc",
+    "test": "jest",
+    "clear": "ts-node src/utils/clear.ts",
+    "clearCache": "ts-node src/utils/clearCache.ts",
     "start": "node dist/app.js",
     "typeorm": "typeorm-ts-node-commonjs",
     "migration:generate": "typeorm-ts-node-commonjs migration:generate -d src/utils/dataSource.ts src/migrations/InitSchema",

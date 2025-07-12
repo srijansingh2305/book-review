@@ -1,11 +1,9 @@
-// Import the initialized TypeORM data source
 import AppDataSource from './dataSource';
-
-// Import the Book and Review entities
 import { Book } from '../models/Book';
 import { Review } from '../models/Review';
+import redisClient from './redisClient'; // Add this
 
-// Define the seed function to insert sample data into the database
+// Seed function to populate the database and clear Redis cache
 const seed = async () => {
   // Initialize the database connection
   await AppDataSource.initialize();
@@ -14,28 +12,62 @@ const seed = async () => {
   const bookRepo = AppDataSource.getRepository(Book);
   const reviewRepo = AppDataSource.getRepository(Review);
 
-  // Create a new book instance
-  const book1 = bookRepo.create({
-    title: 'The Pragmatic Programmer',
-    author: 'Andy Hunt & Dave Thomas',
-    published_date: '1999-10-20',
-  });
+  // Sample book data
+  const books = [
+    {
+      title: 'Clean Code',
+      author: 'Robert C. Martin',
+      published_date: '2008-08-01',
+    },
+    {
+      title: 'The Pragmatic Programmer',
+      author: 'Andrew Hunt & David Thomas',
+      published_date: '1999-10-20',
+    },
+    {
+      title: 'Design Patterns',
+      author: 'Erich Gamma et al.',
+      published_date: '1994-10-21',
+    },
+    {
+      title: 'You Don’t Know JS',
+      author: 'Kyle Simpson',
+      published_date: '2015-12-27',
+    },
+  ];
 
-  // Save the new book to the database
-  await bookRepo.save(book1);
+  // Sample review content
+  const reviews = [
+    'A must-read for every developer.',
+    'Great patterns, still relevant today.',
+    'Concepts are timeless and well explained.',
+    'Helped me write better JavaScript!',
+  ];
 
-  // Create a review associated with the saved book
-  const review1 = reviewRepo.create({
-    reviewer: 'Srijan',
-    content: 'Must-read for developers!',
-    book: book1, // Associate the review with the book
-  });
+  // Loop through each book and create corresponding review
+  for (let i = 0; i < books.length; i++) {
+    // Create and save book entity
+    const book = bookRepo.create(books[i]);
+    await bookRepo.save(book);
 
-  // Save the review to the database
-  await reviewRepo.save(review1);
+    // Create and save review entity linked to the book
+    const review = reviewRepo.create({
+      reviewer: ['Alice', 'Bob', 'Charlie', 'Diana'][i],
+      content: reviews[i],
+      book,
+    });
+    await reviewRepo.save(review);
+  }
 
-  // Log that seeding is complete and exit the process
-  console.log('Seeded sample data');
+  // Connect to Redis if not already connected
+  if (!redisClient.isOpen) {
+    await redisClient.connect();
+  }
+  // Delete the books cache key from Redis
+  await redisClient.del('books_cache');
+
+  // Log completion message and exit process
+  console.log('Seeded sample data and cleared Redis cache');
   process.exit(0);
 };
 
